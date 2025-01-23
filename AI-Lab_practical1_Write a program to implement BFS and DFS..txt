@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX 100
+
+// Adjacency matrix representation of the graph
+int graph[MAX][MAX];
+int visited[MAX];
+int queue[MAX];
+int front = -1, rear = -1;
+
+// Add edge to the graph
+void addEdge(int src, int dest) {
+    graph[src][dest] = 1;
+    graph[dest][src] = 1; // For undirected graph
+}
+
+// Enqueue operation for BFS
+void enqueue(int vertex) {
+    if (rear == MAX - 1) {
+        printf("Queue is full\n");
+        return;
+    }
+    if (front == -1) {
+        front = 0;
+    }
+    queue[++rear] = vertex;
+}
+
+// Dequeue operation for BFS
+int dequeue() {
+    if (front == -1 || front > rear) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    return queue[front++];
+}
+
+// BFS implementation
+void BFS(int start, int vertices) {
+    for (int i = 0; i < vertices; i++) {
+        visited[i] = 0;
+    }
+
+    enqueue(start);
+    visited[start] = 1;
+
+    printf("BFS Traversal starting from vertex %d:\n", start);
+
+    while (front <= rear) {
+        int current = dequeue();
+        printf("%d ", current);
+
+        for (int i = 0; i < vertices; i++) {
+            if (graph[current][i] == 1 && !visited[i]) {
+                enqueue(i);
+                visited[i] = 1;
+            }
+        }
+    }
+    printf("\n");
+}
+
+// DFS implementation
+void DFS(int vertex, int vertices) {
+    printf("%d ", vertex);
+    visited[vertex] = 1;
+
+    for (int i = 0; i < vertices; i++) {
+        if (graph[vertex][i] == 1 && !visited[i]) {
+            DFS(i, vertices);
+        }
+    }
+}
+
+int main() {
+    int vertices = 6;
+
+    // Initialize graph with 0s
+    for (int i = 0; i < vertices; i++) {
+        for (int j = 0; j < vertices; j++) {
+            graph[i][j] = 0;
+        }
+    }
+
+    // Add edges to the graph
+    addEdge(0, 1);
+    addEdge(0, 2);
+    addEdge(1, 3);
+    addEdge(1, 4);
+    addEdge(2, 5);
+
+    printf("Graph Traversals:\n");
+
+    // Perform BFS
+    BFS(0, vertices);
+
+    // Perform DFS
+    for (int i = 0; i < vertices; i++) {
+        visited[i] = 0;
+    }
+    printf("DFS Traversal starting from vertex 0:\n");
+    DFS(0, vertices);
+    printf("\n");
+
+    return 0;
+}
